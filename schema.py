@@ -11,19 +11,23 @@ class Credentials(BaseModel):
     pineconeIndex: str
     openaiApiKey: str
 
+
 class ChatData(BaseModel):
     question: str
     history: Optional[List[str]] = None
     credentials: Credentials
 
+
 class NamespaceData(BaseModel):
     credentials: Credentials
+
 
 class Message(TypedDict):
     type: Literal['apiMessage', 'userMessage']  # Either 'apiMessage' or 'userMessage'
     message: str
     isStreaming: Optional[bool]
     sourceDocs: Optional[List[Document]]
+
 
 class QaChainParams(TypedDict):
     prompt: Optional[PromptTemplate]
@@ -36,3 +40,19 @@ class CreatePineconeIndexArgs(NamedTuple):
     pineconeApiKey: str
     pineconeEnvironment: Optional[str]
     pineconeIndexName: str
+
+
+class DeleteRequest(BaseModel):
+    ids: Optional[List[str]] = None
+    deleteAll: Optional[bool] = None
+    namespace: Optional[str] = None
+    filter: Optional[dict] = None
+
+
+class DeleteOperationRequest(BaseModel):
+    deleteRequest: DeleteRequest
+
+
+class Body(BaseModel):
+    credentials: Credentials
+    deleteRequest: Optional[DeleteRequest]

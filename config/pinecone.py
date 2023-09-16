@@ -1,14 +1,9 @@
-/**
- * Change the namespace to the namespace on Pinecone you'd like to store your embeddings.
- */
+import os
 
-// if (!process.env.PINECONE_INDEX_NAME) {
-//   throw new Error('Missing Pinecone index name in .env file');
-// }
+# if 'PINECONE_INDEX_NAME' not in os.environ:
+#     raise ValueError('Missing Pinecone index name in .env file')
 
-const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME ?? '';
+PINECONE_INDEX_NAME = os.getenv('PINECONE_INDEX_NAME', '')
 
-// your "ingestion" will use this namespace
-const PINECONE_NAME_SPACE = 'pdf-starter'; //namespace is optional for your vectors
-
-export { PINECONE_NAME_SPACE, PINECONE_INDEX_NAME };
+# your "ingestion" will use this namespace
+PINECONE_NAME_SPACE = 'pdf-starter' #namespace is optional for your vectors

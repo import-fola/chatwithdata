@@ -1,46 +1,32 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { PINECONE_NAME_SPACE } from '@/config/pinecone';
-import { createPineconeIndex } from '@/utils/pinecone-client';
+from fastapi import APIRouter, HTTPException
+from schema import DeleteRequest, DeleteOperationRequest, Body, Credentials
+from utils.pinecone_client import create_pinecone_index
+from config.pinecone import PINECONE_NAME_SPACE
 
-interface DeleteRequest {
-  ids?: Array<string>;
-  deleteAll?: boolean;
-  namespace?: string;
-  filter?: object;
-}
+router = APIRouter()
 
-interface DeleteOperationRequest {
-  deleteRequest: DeleteRequest;
-}
+@router.post("/")
+async def handler(body: Body):
+    try:
+        # Initialize Pinecone using the utility function
+        index = await create_pinecone_index({
+            'pineconeApiKey': body.credentials.pineconeApiKey,
+            'pineconeEnvironment': body.credentials.pineconeEnvironment,
+            'pineconeIndexName': body.credentials.pineconeIndex,
+        })
+        
+        # Prepare data for deletion
+        delete_data = body.deleteRequest
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
-  }
-  const { credentials } = req.body;
-
-  console.log('credentials', credentials);
-
-  try {
-    const index = await createPineconeIndex({
-      pineconeApiKey: credentials.pineconeApiKey,
-      pineconeEnvironment: credentials.pineconeEnvironment,
-      pineconeIndexName: credentials.pineconeIndex,
-    });
-
-    await index._deleteRaw({
-      deleteRequest: {
-        deleteAll: true,
-        namespace: PINECONE_NAME_SPACE,
-      },
-    });
-    res.status(200).json({ message: 'delete successful' });
-  } catch (error: any) {
-    console.log('error', error);
-    res.status(500).json({ error: error.message || 'Something went wrong' });
-  }
-}
+        # Perform the deletion using Pinecone
+        delete_response = index.delete(
+            ids=delete_data.ids,
+            delete_all=delete_data.deleteAll,
+            namespace=delete_data.namespace or PINECONE_NAME_SPACE,
+            filter=delete_data.filter
+        )
+        
+        return {"message": "delete successful", "response": delete_response}
+    except Exception as e:
+        print(f"error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

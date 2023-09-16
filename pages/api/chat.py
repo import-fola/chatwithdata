@@ -6,8 +6,7 @@ from schema import ChatData, Credentials
 from utils.makechain import make_chain
 from utils.pinecone_client import create_pinecone_index
 from config.pinecone import PINECONE_NAME_SPACE
-# from utils import make_chain, create_pinecone_index
-# from config import PINECONE_NAME_SPACE
+
 
 app = FastAPI()
 
