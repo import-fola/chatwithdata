@@ -40,3 +40,11 @@ next-env.d.ts
 
 #venv
 /venv
+
+# vs code
+.vscode
+
+# pycache
+/__pycache__
+__pycache__
+/__pycache__/
