@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Form, HTTPException
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores.pinecone import PineconeStore
+from langchain.vectorstores.pinecone import Pinecone
 from utils.extractTextFromWebsiteUrl import extract_text_from_website_url
 from utils.pinecone_client import create_pinecone_index
 from config.pinecone import PINECONE_NAME_SPACE
@@ -42,7 +42,7 @@ async def handler(
         })
         
         # Store documents in Pinecone
-        await PineconeStore.from_documents(docs, embeddings, {
+        await Pinecone.from_documents(docs, embeddings, {
             'pineconeIndex': index,
             'namespace': PINECONE_NAME_SPACE,
             'textKey': 'text',

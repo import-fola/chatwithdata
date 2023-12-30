@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import List, TypedDict, Optional, Literal, NamedTuple
+from pydantic import BaseModel, Field
+from typing import List, TypedDict, Optional, Literal, NamedTuple, Tuple
 
 from langchain.schema import Document
 from langchain import PromptTemplate
@@ -14,7 +14,7 @@ class Credentials(BaseModel):
 
 class ChatData(BaseModel):
     question: str
-    history: Optional[List[str]] = None
+    history: Optional[List[Tuple[str, Optional[str]]]] = None
     credentials: Credentials
 
 
@@ -36,10 +36,11 @@ class QaChainParams(TypedDict):
     type: Optional[str]
 
 
-class CreatePineconeIndexArgs(NamedTuple):
-    pineconeApiKey: str
-    pineconeEnvironment: Optional[str]
-    pineconeIndexName: str
+class CreatePineconeIndexArgs(BaseModel):
+    pineconeApiKey: str = Field(..., description="API key for Pinecone")
+    pineconeEnvironment: Optional[str] = Field(None, description="Pinecone environment")
+    pineconeIndexName: str = Field(..., description="Name of the Pinecone index")
+
 
 
 class DeleteRequest(BaseModel):

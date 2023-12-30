@@ -7,7 +7,7 @@ import pinecone
 
 # //use this client in api routes
 
-def create_pinecone_index(args: CreatePineconeIndexArgs):
+async def create_pinecone_index(args: CreatePineconeIndexArgs):
     pinecone.init(api_key=args.pineconeApiKey,
                   environment=args.pineconeEnvironment)
 

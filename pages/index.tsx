@@ -80,30 +80,31 @@ export default function Home() {
     });
 
     const formData = new FormData();
-    formData.append('openai-api-key', cookieValue.openaiApiKey);
-    formData.append('pinecone-api-key', cookieValue.pineconeApiKey);
-    formData.append('pinecone-environment', cookieValue.pineconeEnvironment);
-    formData.append('pinecone-index', cookieValue.pineconeIndex);
+    formData.append('openai_api_key', cookieValue.openaiApiKey);
+    formData.append('pinecone_api_key', cookieValue.pineconeApiKey);
+    formData.append('pinecone_environment', cookieValue.pineconeEnvironment);
+    formData.append('pinecone_index', cookieValue.pineconeIndex);
     Array.from(files || []).forEach((file) => {
       formData.append('files', file);
     });
 
     try {
-      const response = await fetch('/api/ingest', {
+      const response = await fetch('http://localhost:8000/api/ingest', {
         method: 'POST',
         body: formData,
       });
       const data = await response.json();
       console.log('data', data);
 
-      if (data.error) {
+      if (!response.ok) {
+        // Handle non-OK responses
         toast({
           title: 'Something went wrong',
-          description: data.error,
+          description: data.detail || 'Error during file upload',
           variant: 'destructive',
         });
-        setIsUploading(false);
       } else {
+        // Handle OK response
         toast({
           title: 'Your files have been uploaded successfully',
           variant: 'default',
@@ -111,13 +112,13 @@ export default function Home() {
         router.push('/chatbot');
       }
     } catch (error: any) {
+      // Handle network error or other fetch issues
       console.log(error);
       toast({
         title: 'Something went wrong, please try again',
         description: error.message || '',
         variant: 'destructive',
       });
-      setIsUploading(false);
     }
     setIsUploading(false);
   }
@@ -239,7 +240,7 @@ export default function Home() {
     setUrl(urlInput);
 
     try {
-      const response = await fetch('/api/ingest-url', {
+      const response = await fetch('http://localhost:8000/api/ingest-url', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

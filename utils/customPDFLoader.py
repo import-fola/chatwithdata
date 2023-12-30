@@ -1,11 +1,11 @@
 from langchain.schema import Document
-from PyPDF2 import PdfFileReader
+from PyPDF2 import PdfReader
 import io
 
-async def custom_pdf_loader(raw, filename=''):
-    pdf_reader = PdfFileReader(io.BytesIO(raw))
+def custom_pdf_loader(raw, filename=''):
+    pdf_reader = PdfReader(io.BytesIO(raw))
     page_content = ''
-    for page in range(pdf_reader.getNumPages()):
-        page_content += pdf_reader.getPage(page).extractText()
+    for page in pdf_reader.pages:
+        page_content += page.extract_text()
     return [Document(page_content=page_content, 
-                     metadata={'source': filename, 'pdf_numpages': pdf_reader.getNumPages()})]
+                     metadata={'source': filename, 'pdf_numpages': len(pdf_reader.pages)})]
