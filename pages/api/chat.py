@@ -40,7 +40,7 @@ async def chat_handler(chat_data: ChatData):
         chain = make_chain(vector_store, openai_api_key)
 
         # ask a question
-        response = await chain.call(
+        response = chain(
             {
                 "question": sanitized_question,
                 "chat_history": chat_data.history or [],
