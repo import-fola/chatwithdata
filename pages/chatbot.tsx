@@ -97,10 +97,10 @@ export default function ChatBot() {
       const data = await response.json();
       console.log('data', data);
 
-      if (data.error) {
+      if (!response.ok) {
         toast({
           title: 'Something went wrong',
-          description: data.error,
+          description: data.detail,
           variant: 'destructive',
         });
       } else {
@@ -110,11 +110,11 @@ export default function ChatBot() {
             ...state.messages,
             {
               type: 'apiMessage',
-              message: data.text,
-              sourceDocs: data.sourceDocuments,
+              message: data.answer,
+              sourceDocs: data.source_documents,
             },
           ],
-          history: [...state.history, [question, data.text]],
+          history: [...state.history, [question, data.answer]],
         }));
       }
       console.log('messageState', messageState);
